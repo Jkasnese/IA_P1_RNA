@@ -67,6 +67,8 @@ for filename in os.listdir(reports):
             comment = True
             turn = 0 #0 = train, 1=test, 2=validation
 
+            # TODO: Write similar script to agregate all games data into one file for each category (train,validation,test) 
+            # TODO: Write separates test files for ALL POSITIVE test, ALL NEGATIVE test and 50/50 test.
             name = os.path.splitext(filename)[0]   
             with open(source + name + ".txt") as source_txt:
                 with open(test + name, 'w+') as test_txt:
