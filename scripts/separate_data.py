@@ -36,7 +36,8 @@ for filename in os.listdir(reports):
                     print(str(negative_comments) + filename)
                 line_counter += 1
 
-            #least_comments = math.min(positive_comments, negative_comments) # TODO: Verificar se tá certo
+            # TODO: verify line below and generalize this idea to rest of the code
+            #least_comments = math.min(positive_comments, negative_comments) 
 
             # Data proportion, assuming pos > neg
             # Train has to be 50/50 pos/neg
@@ -75,7 +76,7 @@ for filename in os.listdir(reports):
                                 if (comment == True):
                                     line_buffer = line  
                                     comment = False
-                                else:
+                                else: # TODO: Improve shuffle algo
                                     comment = True
                                     if (line != 'recommended\n'):
                                         if (turn == 2 and validation_wr_neg < validation_negative):
