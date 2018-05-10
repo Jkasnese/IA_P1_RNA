@@ -14,6 +14,33 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 #
 # ------------------------------------------------------------------
 
+def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev, model_dir, optimizer):
+
+    vocab_size, (x_train, y_train), (x_teste, y_teste) = text2panda_one_hot_representation_load.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
+
+
+    my_feature_columns = []
+
+    for i in x_train.columns:
+        tf.feature_column.categorical_column_with_vocabulary_list(
+            key=i,
+            vocabulary_list=x_train.columns
+        )
+
+    # TODO: mudar activation_fn pra configurar outras funções de ativação; 
+    classifier = tf.estimator.DNNClassifier(
+        feature_columns=my_feature_columns,
+        hidden_units=[n_hidden],
+        n_classes=1,
+        optimizer=optimizer)
+
+    # Train with all dataset:
+#    buffer_size=x_train. numero de linhas
+
+    dataset = tf.data.Dataset.from_tensor_slices((dict(x_train), y_train))
+    dataset = dataset.shuffle(buffer_size=9000).repeat().batch(batch_size)    
+
+
 def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev):
 
     from __future__ import print_function
@@ -98,20 +125,4 @@ def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev):
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         print("Accuracy:", accuracy.eval({X: mnist.test.images, Y: mnist.test.labels}))
-
-        © 2018 GitHub, Inc.
-        Terms
-        Privacy
-        Security
-        Status
-        Help
-
-        Contact GitHub
-        API
-        Training
-        Shop
-        Blog
-        About
-
-    Press h to open a hovercard with more details.
 

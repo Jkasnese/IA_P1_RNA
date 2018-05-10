@@ -113,12 +113,12 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                             else:
                                 y_test[line_cont] = 1.0
                             even_line = False
+                            line_cont += 1
                         else:
                             even_line = True
                             line_split = line.split()
                             for word in line_split:
                                 x_test[line_cont][word2int[word]] = 1.0
-                        line_cont += 1
 
 
                     # Create Panda DataFrames with the matrixes
