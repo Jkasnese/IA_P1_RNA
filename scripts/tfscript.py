@@ -61,6 +61,13 @@ def rna (learning_rate, momentum, weights, n_hidden, batch_size, model_dir, opti
     eval_result = classifier.evaluate(
         input_fn=lambda:eval_input_fn(x_test, y_test, batch_size))
 
+    # Add ops to save and restore all the variables.
+    saver = tf.train.Saver()
+
+    # Dentro de session, dps de run:
+    save_path = saver.save(sess, "/tmp/model.ckpt")
+    print("Model saved in path: %s" % save_path)
+
 print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
 
 
