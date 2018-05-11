@@ -14,10 +14,18 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 #
 # ------------------------------------------------------------------
 
-def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev, model_dir, optimizer):
-
+def rna (learning_rate, momentum, weights, n_hidden, batch_size, model_dir, optimizer, steps):
+"""
+    learning rate = float
+    momentum = float
+    weights = tf.Variable
+    n_hidden = integer
+    batch_size = integer
+    model_dir = dir path
+    optimizer = integer
+    steps = integer
+"""
     vocab_size, (x_train, y_train), (x_teste, y_teste) = text2panda_one_hot_representation_load.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
-
 
     my_feature_columns = []
 
@@ -27,6 +35,15 @@ def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev, model_dir, op
             vocabulary_list=x_train.columns
         )
 
+    if (optimizer == 1):
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+    elif (optimizer == 2):
+        optimizer = tf.train.MomemntumOptimizer(learning_rate, momentum)
+    elif (optimizer == 3):
+        optimizer = tf.train.AdagradOptimizer(learning_rate)
+        
+    tf.Variable(treinable=true)
+
     # TODO: mudar activation_fn pra configurar outras funções de ativação; 
     classifier = tf.estimator.DNNClassifier(
         feature_columns=my_feature_columns,
@@ -34,11 +51,23 @@ def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev, model_dir, op
         n_classes=1,
         optimizer=optimizer)
 
+    dataset = tf.data.Dataset.from_tensor_slices((dict(x_train), y_train))
+    dataset = dataset.shuffle(buffer_size=9000).repeat().batch(batch_size) 
+
+    classifier.train(
+        input_fn=lambda:dataset, steps=steps)
+
+    # Evaluate the model.
+    eval_result = classifier.evaluate(
+        input_fn=lambda:eval_input_fn(x_test, y_test, batch_size))
+
+print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
+
+
     # Train with all dataset:
 #    buffer_size=x_train. numero de linhas
 
-    dataset = tf.data.Dataset.from_tensor_slices((dict(x_train), y_train))
-    dataset = dataset.shuffle(buffer_size=9000).repeat().batch(batch_size)    
+   
 
 
 def(learning_rate, n_hidden, batch_size, vocab_size, mean, stddev):
