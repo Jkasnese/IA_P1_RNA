@@ -18,9 +18,10 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
     else:
         return vocabulary_size, panda DataFrames, dictionary (to translate new comments)
 """
-    source = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/text_data/no_signs_caps/train/'
-    destiny = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/text_data/reports/train/'
-    test = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/text_data/no_signs_caps/test/'
+    relative = '/home/aluno/Buba/IA_P1_RNA/'
+    source = relative + 'text_data/no_signs_caps/train/'
+    destiny = relative + 'text_data/reports/train/'
+    test = relative + 'text_data/no_signs_caps/test/'
 
     if (os.path.isfile(source + filename)):
         with open(source + filename) as f:
@@ -129,7 +130,7 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
 
                     # TODO: Precisa passar o dicionáriO? Provavelmente não, já que columns tem as palavras correspondentes.
                     if (translation == True)
-                        return dimension, (x_train, y_train), (x_test, y_test), word2int
+                        return dimension, total_comments, (x_train, y_train), (x_test, y_test), word2int
                     else:
                         return dimension, (x_train, y_train), (x_test, y_test)
             else:
