@@ -64,7 +64,7 @@ def rna (learning_rate, momentum, weights, n_hidden, batch_size, model_dir, opti
     # Add ops to save and restore all the variables.
     saver = tf.train.Saver()
 
-    # Dentro de session, dps de run:
+    # Dentro de session, dps de run, adicionar seguinte linha:
     save_path = saver.save(sess, "/tmp/model.ckpt")
     print("Model saved in path: %s" % save_path)
 
