@@ -22,6 +22,7 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
     source = relative + 'text_data/no_signs_caps/train/'
     destiny = relative + 'text_data/reports/train/'
     test = relative + 'text_data/no_signs_caps/test/'
+    validation = relative + 'text_data/no_signs_caps/validation/'
 
     if (os.path.isfile(source + filename)):
         with open(source + filename) as f:
@@ -129,6 +130,37 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                                 if(word in word2int):
                                     x_test[line_cont][word2int[word]] = 1.0
 
+            if (os.path.isfile(validation + filename)):
+                with open(validation + filename) as val:
+                    test_comments = 0
+                    for line in test:
+                        val_comments += 1
+                    val_comments = int(val_comments/2)
+
+                    # Generate matrix to test set.
+                    # Each line is a comment, 1 represents the word exists and 0 the word doesn't exist on the comment.
+                    test.seek(0)
+                    even_line = False
+                    line_cont = 0
+                    x_val = numpy.zeros((val_comments, dimension), dtype=numpy.float64)
+                    y_val = numpy.zeros((val_comments, 2), dtype=numpy.float64)
+                    for line in test:
+                        if (even_line):
+                            if (line == 'not recommended\n'):
+                                y_val[line_cont][0] = 0.0
+                                y_val[line_cont][1] = 1.0
+                            else:
+                                y_val[line_cont][0] = 1.0
+                                y_val[line_cont][1] = 0.0
+                            even_line = False
+                            line_cont += 1
+                        else:
+                            even_line = True
+                            line_split = line.split()
+                            for word in line_split:
+                                if(word in word2int):
+                                    x_val[line_cont][word2int[word]] = 1.0
+
 
                     # Create Panda DataFrames with the matrixes UNCOMMENT TO PANDA
 #                    x_train = pd.DataFrame(data=x_train, columns=vocab)
@@ -142,7 +174,7 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                     if (translate == True):
                         return dimension, total_comments, (x_train, y_train), (x_test, y_test), word2int
                     else:
-                        return dimension, total_comments, (x_train, y_train), (x_test, y_test)
+                        return dimension, total_comments, (x_train, y_train), (x_test, y_test), (x_val, y_val)
             else:
                 print("File names from train and test set do not match")
     else:

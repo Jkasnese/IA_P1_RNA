@@ -37,10 +37,36 @@ validation = False
 # 3 = Adagrad?
 optimizer = 1
 
+
+
+# FOR A GIVEN PARAMETER
+
 # Fetch data
-vocab_size, n_input, (x_train, y_train), (x_teste, y_teste) = fetch_data.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
+vocab_size, n_input, (x_train, y_train), (x_teste, y_teste), (x_val, y_val) = fetch_data.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
 
-
+# First "batch" of comparison. First training creates weights/biases, subsequent trainings use the same.
+# After 10 runs with hyperparameter variations, change the initial weights (by training a new session without weights) and train the rest.
+# That way, we have combined mesures.
 w1, w2, b1, b2 = my_nn.tf_eager('Teste0', 'Football_Manager_2015', 0.1, 0.01, 256, 0, 100, 30, '~/tf/', 1, 0.0, 0.35)
 weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 my_nn.tf_eager('Teste1', 'Football_Manager_2015', 0.1, 0.01, 256, 0, 100, 30, '~/tf/', 1, 0.0, 0.35, weights=weights, biases=biases)
+
+# Plot comparison
+comparison_matrix = [10][epochs]
+
+# Ploting graphics
+fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
+fig.suptitle('Training Metrics')
+
+axes[0].set_ylabel("Loss", fontsize=14)
+axes[0].plot(train_loss_results, 'r')
+axes[0].plot(train_accuracy_results, 'b')
+
+axes[1].set_ylabel("Accuracy", fontsize=14)
+axes[1].set_xlabel("Epoch", fontsize=14)
+axes[1].plot(train_accuracy_results, 'g')
+axes[1].plot(train_loss_results, 'y')
+
+plt.show()
+
+
