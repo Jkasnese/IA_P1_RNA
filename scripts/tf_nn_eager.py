@@ -16,10 +16,7 @@ def multilayer_perceptron(x, weights, biases):
 def next_batch(step, batch_size, matrix):
     return matrix[step*batch_size:batch_size+step*batch_size]
 
-def tf_eager(name, vocab_size, (x_train, y_train), (x_test, y_test), learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, weights=None, biases=None):
-
-    #Constructing data
-    vocab_size, n_comments, (x_train, y_train), (x_test, y_test), (x_val, y_val), val_comments = fetch_data.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
+def tf_eager(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=None, biases=None): 
 
     # Parameters
     display_step = 1
@@ -98,8 +95,7 @@ def tf_eager(name, vocab_size, (x_train, y_train), (x_test, y_test), learning_ra
         # TODO: Return arrays with data from training to compare with others and plot graphs.
         return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, acc
 
-
-def nn_val_set(name, filename, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, weights=None, biases=None):
+def nn_val_set(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val, weights=None, biases=None):
     
     # Parameters
     display_step = 1
@@ -117,11 +113,7 @@ def nn_val_set(name, filename, learning_rate, momentum, n_hidden, n_comments, ba
     # Define train loss
     loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
         logits=logits, labels=Y))
-
-    val_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
-        logits=logits, labels=Z))
  
-
     # Define Optimizer
     if (optimizer == 1):
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
@@ -151,6 +143,7 @@ def nn_val_set(name, filename, learning_rate, momentum, n_hidden, n_comments, ba
         # Training cycle
         for epoch in range(epochs):
             avg_cost = 0.
+            avg_val_cost = 0.
             total_batch = int(n_comments/batch_size)
 
             # Loop over all batches
@@ -162,11 +155,19 @@ def nn_val_set(name, filename, learning_rate, momentum, n_hidden, n_comments, ba
                 # Run optimization op (backprop) and cost op (to get loss value)
                 _,c = sess.run([train_op, loss_op], feed_dict={X: batch_x, Y: batch_y})
 
-                ## Compute average loss
+                ## Compute average LOSS
                 # Training loss
                 avg_cost += c / total_batch
 
+                # Validation loss
+                val_cost = sess.run([loss_op], feed_dict={X: x_val, Y: y_val})[0]
+                avg_val_cost += val_cost / val_comments
 
+
+
+
+
+            ### ACCURACY
             # Model and define correct
             model = tf.nn.softmax(logits)
             correct = tf.equal(tf.argmax(model, 1), tf.argmax(Y, 1))
@@ -182,18 +183,18 @@ def nn_val_set(name, filename, learning_rate, momentum, n_hidden, n_comments, ba
 
             ## Validation
             # Validation loss
-            val_cost = sess.run([val_loss], feed_dict={X: x_val, Y: y_val})
-            avg_val_cost += val_cost / val_comments
+            validation_loss_results.append(avg_val_cost)
 
             # Compute validation accuracy on training set
             val_acc = accuracy.eval({X: x_val, Y: y_val})
-            validation_accuracy_results.append(val_acc)
+            validation_accuracy_results.append(val_acc) 
 
             # Display logs per epoch step
             if epoch % display_step == 0:
                 # Loss
                 print("Epoch:", '%04d' % (epoch+1), "cost={:.9f}".format(avg_cost))
                 print("Accuracy train:" + str(train_acc) + " Accuracy val: " + str(val_acc))
+
 
         print("Optimization Finished!")
 

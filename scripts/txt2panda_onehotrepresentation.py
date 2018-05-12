@@ -132,19 +132,19 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
 
             if (os.path.isfile(validation + filename)):
                 with open(validation + filename) as val:
-                    test_comments = 0
-                    for line in test:
+                    val_comments = 0
+                    for line in val:
                         val_comments += 1
                     val_comments = int(val_comments/2)
 
-                    # Generate matrix to test set.
+                    # Generate matrix to val set.
                     # Each line is a comment, 1 represents the word exists and 0 the word doesn't exist on the comment.
-                    test.seek(0)
+                    val.seek(0)
                     even_line = False
                     line_cont = 0
                     x_val = numpy.zeros((val_comments, dimension), dtype=numpy.float64)
                     y_val = numpy.zeros((val_comments, 2), dtype=numpy.float64)
-                    for line in test:
+                    for line in val:
                         if (even_line):
                             if (line == 'not recommended\n'):
                                 y_val[line_cont][0] = 0.0
@@ -174,10 +174,8 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                     if (translate == True):
                         return dimension, total_comments, (x_train, y_train), (x_test, y_test), word2int
                     else:
-                        return dimension, total_comments, (x_train, y_train), (x_test, y_test), (x_val, y_val)
+                        return dimension, total_comments, x_train, y_train, x_test, y_test, x_val, y_val, val_comments
             else:
                 print("File names from train and test set do not match")
     else:
         print(filename + "Is not a file name")
-
-one_hot_representation_load('Football_Manager_2015')
