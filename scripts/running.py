@@ -3,6 +3,10 @@ import txt2panda_onehotrepresentation as fetch_data
 import tf_nn_eager as my_nn
 import gen_wb
 import plot_graph as my_plt
+import os
+
+# Suppress TF info messages
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 # Dir settings
 relative_path = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/'
