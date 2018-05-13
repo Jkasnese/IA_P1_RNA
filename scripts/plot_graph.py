@@ -27,7 +27,7 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc):
     axes[0].legend()
     plt.show()
 
-def test_acc(title, test_acc):
+def test_acc(title, test_acc, parameter_name, x_values):
 
     # Define picture
     fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
@@ -35,10 +35,11 @@ def test_acc(title, test_acc):
 
     # Axis labels
     axes.set_ylabel("Acurácia no Teste", fontsize=14)
-    axes.set_xlabel("Parâmetro", fontsize=14)
+    axes.set_xlabel(parameter_name, fontsize=14)
+    axes.set_xscale(x_values)
 
     # Plot
-    axes.plot(test_acc, color='b', label='A')
+    axes.plot(x_values, test_acc, color='b', label='A')
 
     plt.show()
 

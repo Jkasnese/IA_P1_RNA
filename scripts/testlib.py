@@ -15,7 +15,7 @@ def demo(sty):
 
     plt.show()
 
-def test_acc2(title, test_acc):
+def test_acc2(title, test_acc, parameter_name='Número do treino', x_scale=None):
 
     # Define picture
     fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
@@ -23,15 +23,20 @@ def test_acc2(title, test_acc):
 
     # Axis labels
     axes.set_ylabel("Acurácia no Teste", fontsize=14)
-    axes.set_xlabel("Parâmetro", fontsize=14)
+    axes.set_xlabel(parameter_name, fontsize=14)
+#    axes.set_xlim(0, 0.4)    
+ #   axes.set_xticklabels(x_scale)
 
     # Plot
-    axes.plot(test_acc, color='b', label='A')
+    axes.plot(x_scale, test_acc, color='b', label='A')
 
     plt.show()
 
+
 test_acc = []
+x_units = []
 for i in range(5):
     test_acc.append(i)
+    x_units.append(i/10.0)
 
-test_acc2("afef", test_acc)
+test_acc2("afef", test_acc, "aef", x_units)

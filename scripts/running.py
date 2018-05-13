@@ -58,7 +58,6 @@ for i in range (n_runs):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
-        print(test_acc)
     print(i)
 
 my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
@@ -105,71 +104,238 @@ with open (exp + 'pesos_iniciais_distantes', 'w+') as pesos_prox:
 mean = 0.0
 stddev = 0.35
 
-
-def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
-    train_losses = []
-    train_accs = []
-    test_accs = []
-    test_accs_label = []
-
-    n_runs = 100
-    plot_run = 14
-    max_acc = 0
-    best_parameter = 0
-
-    # Generating weights and biases
-    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    test_accs.append(test_acc)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
-
-    # Saving initial weights and biases
-    weights, biases = gen_wb.init_values(w1, w2, b1, b2)
-
-    # Running the rest with same weights and biases
-    for i in range (n_runs-1):
-        w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
-        test_accs.append(test_acc)
-        if (i % plot_run == 0):
-            train_losses.append(train_loss)
-            train_accs.append(train_acc)
-            test_accs_label.append(test_acc)
-
-        # Save best parameter value
-        if (test_acc > max_acc):
-            max_acc = test_acc
-            best_parameter = parameter
-        print(i)
-
-        # Varing parameters to test:
-        parameter += vary
-
-    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-    my_plt.test_acc(name, test_accs)
-
-    min_acc = min(test_accs)
-
-    with open (exp + name, 'w+') as pesos_prox:
-        pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
-        pesos_prox.write("Melhor parametro de " + name + " :" + str(best_parameter))
-
-    return best_parameter
-
-
 # # # # TESTING FOR NUMBER OF NEURONS # # # #
 
-#def vary(name, parameter_init, operation, vary, n_runs=100, plot_run=14):
-best_hidden = vary("Numero_de_Neuronios", 31, 25)
+#def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
+name = "Numero_de_Neuronios"
+h_hidden = 31
+vary = 25
+train_losses = []
+train_accs = []
+test_accs = []
+test_accs_label = []
+x_value = []
+
+# Generating weights and biases
+w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+
+# Plot first value
+x_value.append(n_hidden)
+test_accs.append(test_acc)
+train_losses.append(train_loss)
+train_accs.append(train_acc)
+test_accs_label.append(test_acc)
+
+max_acc = test_acc
+best_hidden = n_hidden
+
+# Saving initial weights and biases
+weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+# Running the rest with same weights and biases
+for i in range (n_runs-1):
+    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    test_accs.append(test_acc)
+    if (i % plot_run == 0):
+        x_value.append(n_hidden)
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
+
+    # Save best parameter value
+    if (test_acc > max_acc):
+        max_acc = test_acc
+        best_hidden = n_hidden
+    print(i)
+
+    # Varing parameters to test:
+    n_hidden += vary
+
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+my_plt.test_acc(name, test_accs, name, x_value)
+
+min_acc = min(test_accs)
+
+with open (exp + name, 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+    pesos_prox.write("Melhor parametro de " + name + " :" + str(best_hidden))
+
+# Change to best value
+n_hidden = best_hidden
 
 # # # # TESTING FOR LEARNING RATE # # # #
-best_learning = vary("Taxa_de_Aprendizagem", 0.001, 0.25)
+#def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
+name = "Taxa_de_Aprendizagem"
+learning_rate = 0.001
+vary = 0.25
+train_losses = []
+train_accs = []
+test_accs = []
+test_accs_label = []
+x_value = []
+
+# Generating weights and biases
+w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+
+# Plot first value
+x_value.append(learning_rate)
+test_accs.append(test_acc)
+train_losses.append(train_loss)
+train_accs.append(train_acc)
+test_accs_label.append(test_acc)
+
+max_acc = test_acc
+best_learning = learning_rate
+
+# Saving initial weights and biases
+weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+# Running the rest with same weights and biases
+for i in range (n_runs-1):
+    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    test_accs.append(test_acc)
+    if (i % plot_run == 0):
+        x_value.append(learning_rate)
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
+
+    # Save best parameter value
+    if (test_acc > max_acc):
+        max_acc = test_acc
+        best_learning = learning_rate
+    print(i)
+
+    # Varing parameters to test:
+    learning_rate += vary
+
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+my_plt.test_acc(name, test_accs, name, x_value)
+
+min_acc = min(test_accs)
+
+with open (exp + name, 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+    pesos_prox.write("Melhor parametro de " + name + " :" + str(best_learning))
+
+# Change to best value 
+learning_rate = best_learning
 
 # # # # TESTING FOR BATCH_SIZE # # # #
-best_batch = vary("Tamanho_do_Batch", 1, 10)
+name = "Tamanho_do_batch"
+batch_size = 1
+vary = 10
+train_losses = []
+train_accs = []
+test_accs = []
+test_accs_label = []
+x_value = []
+
+# Generating weights and biases
+w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+
+# Plot first value
+x_value.append(batch_size)
+test_accs.append(test_acc)
+train_losses.append(train_loss)
+train_accs.append(train_acc)
+test_accs_label.append(test_acc)
+
+max_acc = test_acc
+best_batch = batch_size
+
+# Saving initial weights and biases
+weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+# Running the rest with same weights and biases
+for i in range (n_runs-1):
+    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    test_accs.append(test_acc)
+    if (i % plot_run == 0):
+        x_value.append(batch_size)
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
+
+    # Save best parameter value
+    if (test_acc > max_acc):
+        max_acc = test_acc
+        best_batch = batch_size
+    print(i)
+
+    # Varing parameters to test:
+    batch_size += vary
+
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+my_plt.test_acc(name, test_accs, name, x_value)
+
+min_acc = min(test_accs)
+
+with open (exp + name, 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+    pesos_prox.write("Melhor parametro de " + name + " :" + str(best_batch))
+
+# Change to best value 
+batch_size = best_batch
 
 # # # # TESTING FOR MOMENTUM # # # #
 optimizer = 2
 best_momentum = vary("Variacao_do_Momento", 0.001, 0.05)
+name = "Variação_do_Momento"
+momentum = 0.001
+vary = 0.05
+train_losses = []
+train_accs = []
+test_accs = []
+test_accs_label = []
+x_value = []
+
+# Generating weights and biases
+w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+
+# Plot first value
+x_value.append(momentum)
+test_accs.append(test_acc)
+train_losses.append(train_loss)
+train_accs.append(train_acc)
+test_accs_label.append(test_acc)
+
+max_acc = test_acc
+best_momentum = momentum
+
+# Saving initial weights and biases
+weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+# Running the rest with same weights and biases
+for i in range (n_runs-1):
+    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    test_accs.append(test_acc)
+    if (i % plot_run == 0):
+        x_value.append(momentum)
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
+
+    # Save best parameter value
+    if (test_acc > max_acc):
+        max_acc = test_acc
+        best_momentum = momentum
+    print(i)
+
+    # Varing parameters to test:
+    momentum += vary
+
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+my_plt.test_acc(name, test_accs, name, x_value)
+
+min_acc = min(test_accs)
+
+with open (exp + name, 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+    pesos_prox.write("Melhor parametro de " + name + " :" + str(best_momentum))
+
+# Change to best value 
+momentum = best_momentum
 
 # Restore parameters to initial values
 optimizer = 1
@@ -254,6 +420,54 @@ with open (relative_path + exp + 'Otimizadores', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
     pesos_prox.write("Melhor parametro de " + 'otimizadores' + " :" + str(test_accs_array.index(max(test_accs_array)) +1) )
 
+def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
+    train_losses = []
+    train_accs = []
+    test_accs = []
+    test_accs_label = []
+    x_value = []
+
+    max_acc = 0
+    best_parameter = 0
+
+    # Generating weights and biases
+    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+    test_accs.append(test_acc)
+    train_losses.append(train_loss)
+    train_accs.append(train_acc)
+
+    # Saving initial weights and biases
+    weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+    # Running the rest with same weights and biases
+    for i in range (n_runs-1):
+        w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+        test_accs.append(test_acc)
+        if (i % plot_run == 0):
+            x_value.append()
+            train_losses.append(train_loss)
+            train_accs.append(train_acc)
+            test_accs_label.append(test_acc)
+
+        # Save best parameter value
+        if (test_acc > max_acc):
+            max_acc = test_acc
+            best_parameter = parameter
+        print(i)
+
+        # Varing parameters to test:
+        parameter += vary
+
+    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+    my_plt.test_acc(name, test_accs, name, )
+
+    min_acc = min(test_accs)
+
+    with open (exp + name, 'w+') as pesos_prox:
+        pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+        pesos_prox.write("Melhor parametro de " + name + " :" + str(best_parameter))
+
+    return best_parameter
 
 # # # # # # # # # # # # # # # # # # STAGE 2 - VALIDATION # # # # # # # # # # # # # # #
 
