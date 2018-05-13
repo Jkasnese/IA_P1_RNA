@@ -28,7 +28,10 @@ def test_acc2(title, test_acc, parameter_name='Número do treino', x_scale=None)
  #   axes.set_xticklabels(x_scale)
 
     # Plot
-    axes.plot(x_scale, test_acc, color='b', label='A')
+    if (x_scale == None):
+        axes.plot(test_acc, color='b', label='A')
+    else:
+        axes.plot(x_scale, test_acc, color='b', label='A')
 
     plt.show()
 
@@ -39,4 +42,4 @@ for i in range(5):
     test_acc.append(i)
     x_units.append(i/10.0)
 
-test_acc2("afef", test_acc, "aef", x_units)
+test_acc2("afef", test_acc)

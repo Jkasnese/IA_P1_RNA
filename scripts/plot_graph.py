@@ -27,7 +27,7 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc):
     axes[0].legend()
     plt.show()
 
-def test_acc(title, test_acc, parameter_name, x_values):
+def test_acc(title, test_acc, parameter_name="Número_do_Treino", x_values=None):
 
     # Define picture
     fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
@@ -39,7 +39,10 @@ def test_acc(title, test_acc, parameter_name, x_values):
     axes.set_xscale(x_values)
 
     # Plot
-    axes.plot(x_values, test_acc, color='b', label='A')
+    if (x_values == None):
+        axes.plot(test_acc, color='b', label='A')
+    else:
+        axes.plot(x_values, test_acc, color='b', label='A')
 
     plt.show()
 
