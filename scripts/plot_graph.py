@@ -34,11 +34,11 @@ def test_acc(title, test_acc):
     fig.suptitle(title)
 
     # Axis labels
-    axes[0].set_ylabel("Acurácia no Teste", fontsize=14)
-    axes[0].set_xlabel("Parâmetro", fontsize=14)
+    axes.set_ylabel("Acurácia no Teste", fontsize=14)
+    axes.set_xlabel("Parâmetro", fontsize=14)
 
     # Plot
-    axes[0].plot(test_acc, color='b', label='A')
+    axes.plot(test_acc, color='b', label='A')
 
     plt.show()
 

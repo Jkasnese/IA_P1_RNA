@@ -47,6 +47,7 @@ optimizer = 1
 train_losses = []
 train_accs = []
 test_accs = []
+test_accs_label = []
 n_runs = 20
 plot_run = 3
 
@@ -56,9 +57,10 @@ for i in range (n_runs):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
     print(i)
 
-my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs)
+my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
 my_plt.test_acc("Pesos Iniciais próximos", test_accs)
 
 max_acc = max(test_accs)
@@ -72,6 +74,7 @@ with open (exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
 train_losses = []
 train_accs = []
 test_accs = []
+test_accs_label = []
 n_runs = 20
 plot_run = 3
 
@@ -81,12 +84,13 @@ for i in range (n_runs):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        test_accs_label.append(test_acc)
     # Varing parameters to test:
     mean += 0.07
     stddev += 0.0035
 
 
-my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs)
+my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
 my_plt.test_acc("Pesos Iniciais distantes", test_accs)
 
 max_acc = max(test_accs)
@@ -105,6 +109,8 @@ def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
     train_losses = []
     train_accs = []
     test_accs = []
+    test_accs_label = []
+
     n_runs = 100
     plot_run = 14
     max_acc = 0
@@ -126,6 +132,7 @@ def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
         if (i % plot_run == 0):
             train_losses.append(train_loss)
             train_accs.append(train_acc)
+            test_accs_label.append(test_acc)
 
         # Save best parameter value
         if (test_acc > max_acc):
@@ -136,7 +143,7 @@ def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
         # Varing parameters to test:
         parameter += vary
 
-    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs)
+    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
     my_plt.test_acc(name, test_accs)
 
     min_acc = min(test_accs)
@@ -237,7 +244,7 @@ test_accs_array.append(max_acc)
 test_accs_array.append(max_acc_2)
 test_accs_array.append(max_acc_3)
 
-my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs)
+my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array)
 
 max_acc = max(test_accs_array)
 min_acc = min(test_accs_array)
@@ -268,8 +275,3 @@ with open (relative_path + exp + 'Otimizadores', 'w+') as pesos_prox:
 
 # Plot comparison
 #comparison_matrix = [10][epochs]
-"""
-
-
-
-

@@ -15,5 +15,23 @@ def demo(sty):
 
     plt.show()
 
-demo('default')
-demo('seaborn')
+def test_acc2(title, test_acc):
+
+    # Define picture
+    fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
+    fig.suptitle(title)
+
+    # Axis labels
+    axes.set_ylabel("Acurácia no Teste", fontsize=14)
+    axes.set_xlabel("Parâmetro", fontsize=14)
+
+    # Plot
+    axes.plot(test_acc, color='b', label='A')
+
+    plt.show()
+
+test_acc = []
+for i in range(5):
+    test_acc.append(i)
+
+test_acc2("afef", test_acc)
