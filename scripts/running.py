@@ -48,14 +48,17 @@ best_batch = 0
 optimizer = 1
 
 
+# Test parameters
+n_runs = 20
+plot_run = 3
+
+"""
 # # # # TESTING FOR CLOSE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
 train_accs = []
 test_accs = []
 test_accs_label = []
-n_runs = 20
-plot_run = 3
-name = 'Pesos_Iniciais_Distantes'
+
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
@@ -74,20 +77,21 @@ min_acc = min(test_accs)
 
 with open (exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
-
+"""
 
 # # # # TESTING FOR WIDE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
 train_accs = []
 test_accs = []
 test_accs_label = []
-x_values = []
+x_value = []
+name = 'Pesos_Iniciais_Distantes'
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
     test_accs.append(test_acc)
+    x_value.append(mean+stddev)
     if (i % plot_run == 0):
-        x_values.append(mean+stddev)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -98,7 +102,7 @@ for i in range (n_runs):
 
 
 my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
-my_plt.test_acc("Pesos Iniciais distantes", test_accs, plots, name, x_values)
+my_plt.test_acc("Pesos Iniciais distantes", test_accs, plots, name, x_value)
 
 max_acc = max(test_accs)
 min_acc = min(test_accs)
