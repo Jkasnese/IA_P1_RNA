@@ -27,3 +27,18 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc):
     axes[0].legend()
     plt.show()
 
+def test_acc(title, test_acc):
+
+    # Define picture
+    fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
+    fig.suptitle(title)
+
+    # Axis labels
+    axes[0].set_ylabel("Acurácia no Teste", fontsize=14)
+    axes[0].set_xlabel("Parâmetro", fontsize=14)
+
+    # Plot
+    axes[0].plot(test_acc, color='b', label='A')
+
+    plt.show()
+

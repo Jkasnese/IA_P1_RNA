@@ -6,10 +6,10 @@ import plot_graph as my_plt
 
 # Dir settings
 relative_path = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/'
-model_dir = relative_path + 'models/'
+exp = relative_path + 'exp/'
 
 # File to get data from
-filename = 'Football_Manager_2015'
+filename = 'Grand_Theft_Auto_V'
 
 # Fetch data
 vocab_size, n_comments, x_train, y_train, x_test, y_test, x_val, y_val, val_comments = fetch_data.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
@@ -42,35 +42,55 @@ optimizer = 1
 train_losses = []
 train_accs = []
 test_accs = []
-n_runs = 7
+n_runs = 100
+plot_run = 14
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
     test_accs.append(test_acc)
+    if (i % plot_run == 0):
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
 
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
+my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs)
+my_plt.test_acc("Pesos Iniciais próximos", test_accs)
+
+max_acc = max(test_accs)
+min_acc = min(test_accs)
+
+with open (relative_path + exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
 
 
 # # # # TESTING FOR WIDE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
 train_accs = []
 test_accs = []
-n_runs = 7
+n_runs = 100
+plot_run = 14
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
     test_accs.append(test_acc)
-
+    if (i % plot_run == 0):
+        train_losses.append(train_loss)
+        train_accs.append(train_acc)
     # Varing parameters to test:
-    mean += 1.0
-    stddev += 0.35
+    mean += 0.07
+    stddev += 0.0035
 
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
 
+my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs)
+my_plt.test_acc("Pesos Iniciais distantes", test_accs)
+
+max_acc = max(test_accs)
+min_acc = min(test_accs)
+
+with open (relative_path + exp + 'pesos_iniciais_distantes', 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+
+
+"""
 #TODO: save 3 best parameters to find a best combination later
 # Restore parameters to initial values
 mean = 0.0
@@ -220,7 +240,7 @@ optimizer = 1
 
 # Plot comparison
 #comparison_matrix = [10][epochs]
-
+"""
 
 
 
