@@ -65,8 +65,8 @@ for i in range (n_runs):
         test_accs_label.append(test_acc)
     print(i)
 
-my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plot)
-my_plt.test_acc("Pesos Iniciais próximos", test_accs)
+my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc("Pesos Iniciais próximos", test_accs, plots)
 
 max_acc = max(test_accs)
 min_acc = min(test_accs)
@@ -80,11 +80,13 @@ train_losses = []
 train_accs = []
 test_accs = []
 test_accs_label = []
+x_values = []
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
     test_accs.append(test_acc)
     if (i % plot_run == 0):
+        x_values.append(mean+stddev)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -94,8 +96,8 @@ for i in range (n_runs):
     stddev += 0.0035
 
 
-my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-my_plt.test_acc("Pesos Iniciais distantes", test_accs)
+my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc("Pesos Iniciais distantes", test_accs, plots, name, x_values)
 
 max_acc = max(test_accs)
 min_acc = min(test_accs)
@@ -155,8 +157,8 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     n_hidden += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-my_plt.test_acc(name, test_accs, name, x_value)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
 
@@ -213,8 +215,8 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     learning_rate += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-my_plt.test_acc(name, test_accs, name, x_value)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
 
@@ -270,8 +272,8 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     batch_size += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-my_plt.test_acc(name, test_accs, name, x_value)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
 
@@ -329,8 +331,8 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     momentum += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-my_plt.test_acc(name, test_accs, name, x_value)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
 
@@ -415,7 +417,7 @@ test_accs_array.append(max_acc)
 test_accs_array.append(max_acc_2)
 test_accs_array.append(max_acc_3)
 
-my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array)
+my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array, plots)
 
 max_acc = max(test_accs_array)
 min_acc = min(test_accs_array)
@@ -462,8 +464,8 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
         # Varing parameters to test:
         parameter += vary
 
-    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
-    my_plt.test_acc(name, test_accs, name, )
+    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+    my_plt.test_acc(name, test_accs, name, plots)
 
     min_acc = min(test_accs)
 
