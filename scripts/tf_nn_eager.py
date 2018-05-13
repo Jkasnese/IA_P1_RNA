@@ -87,9 +87,6 @@ def tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_si
             train_acc = accuracy.eval({X: x_train, Y: y_train})
             train_accuracy_results.append(train_acc)
 
-
-        print("Optimization Finished!")
-
         # Test model
         pred = tf.nn.softmax(logits)  # Apply softmax to logits
         correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
@@ -169,10 +166,6 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
                 val_cost = sess.run([loss_op], feed_dict={X: x_val, Y: y_val})[0]
                 avg_val_cost += val_cost / val_comments
 
-
-
-
-
             ### ACCURACY
             # Model and define correct
             model = tf.nn.softmax(logits)
@@ -195,39 +188,14 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
             val_acc = accuracy.eval({X: x_val, Y: y_val})
             validation_accuracy_results.append(val_acc) 
 
-            # Display logs per epoch step
-            if epoch % display_step == 0:
-                # Loss
-                print("Epoch:", '%04d' % (epoch+1), "cost={:.9f}".format(avg_cost))
-                print("Accuracy train:" + str(train_acc) + " Accuracy val: " + str(val_acc))
-
-
-        print("Optimization Finished!")
-
         # Test model
         pred = tf.nn.softmax(logits)  # Apply softmax to logits
         correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
 
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-        print("Accuracy:", accuracy.eval({X: x_test, Y: y_test}))
 
-        ## Ploting graphics
-        # TODO: Call pg.plot_graph function
-        fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
-        fig.suptitle('Training Metrics')
-
-        axes[0].set_ylabel("Loss", fontsize=14)
-        axes[0].plot(train_loss_results, 'r')
-        axes[0].plot(validation_loss_results, 'b')
-
-        axes[1].set_ylabel("Accuracy", fontsize=14)
-        axes[1].set_xlabel("Epoch", fontsize=14)
-        axes[1].plot(train_accuracy_results, 'g')
-        axes[1].plot(validation_accuracy_results, 'y')
-
-        plt.show()
 
 
         # TODO: Return arrays with data from training to compare with others and plot graphs.
-        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, train_loss_results, train_accuracy_results, validation_loss_results, validation_accuracy_results
+        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_acc, train_loss_results, train_accuracy_results, validation_loss_results, validation_accuracy_results

@@ -21,15 +21,20 @@ mean = 0.0
 
 # Number of neurons in hidden layer
 n_hidden = 256
+best_hidden = 0
 
 # Learning rate
 learning_rate = 0.1
+best_learning = 0
+
 # Momentum
 momentum = 0.01
+best_momentum = 0
 
 # Number of elements per batch
 batch_size = 100
 epochs = 30
+best_batch = 0
 
 ## Optimizer
 # 1 = SDG
@@ -89,134 +94,161 @@ min_acc = min(test_accs)
 with open (relative_path + exp + 'pesos_iniciais_distantes', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
 
-
-"""
 #TODO: save 3 best parameters to find a best combination later
 # Restore parameters to initial values
 mean = 0.0
 stddev = 0.35
 
 
-# # # # TESTING FOR NUMBER OF NEURONS # # # #
-train_losses = []
-train_accs = []
-test_accs = []
-n_runs = 7
+def vary(name, parameter_init, vary, n_runs=100, plot_run=14):
+    train_losses = []
+    train_accs = []
+    test_accs = []
+    n_runs = 100
+    plot_run = 14
+    max_acc = 0
+    best_parameter = 0
 
-# Initializing parameter to vary
-n_hidden = 64
-
-for i in range (n_runs):
+    # Generating weights and biases
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+    test_accs.append(test_acc)
     train_losses.append(train_loss)
     train_accs.append(train_acc)
-    test_accs.append(test_acc)
 
-    # Varing parameters to test:
-    n_hidden *= 4
+    # Saving initial weights and biases
+    weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
+    # Running the rest with same weights and biases
+    for i in range (n_runs-1):
+        w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+        test_accs.append(test_acc)
+        if (i % plot_run == 0):
+            train_losses.append(train_loss)
+            train_accs.append(train_acc)
 
-# Restore parameters to initial values
-n_hidden = 256
+        # Save best parameter value
+        if (test_acc > max_acc):
+            max_acc = test_acc
+            best_parameter = parameter
 
+        # Varing parameters to test:
+        parameter += vary
+
+    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs)
+    my_plt.test_acc(name, test_accs)
+
+    min_acc = min(test_accs)
+
+    with open (relative_path + exp + name, 'w+') as pesos_prox:
+        pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+        pesos_prox.write("Melhor parametro de " + name + " :" + str(best_parameter))
+
+    return best_parameter
+
+
+# # # # TESTING FOR NUMBER OF NEURONS # # # #
+
+#def vary(name, parameter_init, operation, vary, n_runs=100, plot_run=14):
+best_hidden = vary("Numero_de_Neuronios", 31, 25)
 
 # # # # TESTING FOR LEARNING RATE # # # #
-train_losses = []
-train_accs = []
-test_accs = []
-n_runs = 7
-
-# Initializing parameter to vary
-learning_rate = 0.0001
-
-for i in range (n_runs):
-    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
-    test_accs.append(test_acc)
-
-    # Varing parameters to test:
-    learning_rate *= 10    
-
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
-
-# Restore parameters to initial values
-learning_rate = 0.1
-
+best_learning = vary("Taxa_de_Aprendizagem", 0.001, 0.05)
 
 # # # # TESTING FOR BATCH_SIZE # # # #
-train_losses = []
-train_accs = []
-test_accs = []
-n_runs = 7
+best_batch = vary("Tamanho_do_Batch", 1, 10)
 
-# Initializing parameter to vary
-batch_size = 1
-
-for i in range (n_runs):
-    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
-    test_accs.append(test_acc)
-
-    # Varing parameters to test:
-    batch_size += 110
-
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
+# # # # TESTING FOR MOMENTUM # # # #
+optimizer = 2
+best_momentum = vary("Variacao_do_Momento", 0.001, 0.01)
 
 # Restore parameters to initial values
-batch_size = 100
-
+optimizer = 1
 
 # # # # TESTING FOR OPTIMIZERS # # # #
+test_acc_temp = []
+train_loss_temp = []
+train_acc_temp = []
+
 train_losses = []
 train_accs = []
-test_accs = []
-n_runs = 3
+max_acc_1 = 0
 
-# Initializing parameter to vary
-# default is 1
+train_losses_2 = []
+train_accs_2 = []
+max_acc_2 = 0
 
-for i in range (n_runs):
+train_losses_3 = []
+train_accs_3 = []
+max_acc_3 = 0
+
+n_runs = 90
+max_acc = 0
+best_parameter = 0
+
+for i in range(3):
+    # Generating weights and biases
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
-    test_accs.append(test_acc)
+
+    # Saving initial weights and biases
+    weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+    # Running the rest with same weights and biases
+    for j in range (10):
+        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+
+        # Save best parameter value
+        if (test_acc_temp > max_acc_1):
+            max_acc_1 = test_acc_temp
+            train_losses = train_loss_temp
+            train_accs = train_acc_temp
 
     # Varing parameters to test:
     optimizer += 1
 
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
+    # Running the rest with same weights and biases
+    for j in range (10):
+        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
 
-# Restore parameters to initial values
-optimizer = 1
+        # Save best parameter value
+        if (test_acc_temp > max_acc_2):
+            max_acc_2 = test_acc_temp
+            train_losses_2 = train_loss_temp
+            train_accs_2 = train_acc_temp
 
+    # Running the rest with same weights and biases
+    for j in range (10):
+        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
 
-# # # # TESTING FOR MOMENTUM # # # #
-train_losses = []
-train_accs = []
-test_accs = []
-n_runs = 7
+        # Save best parameter value
+        if (test_acc_temp > max_acc_2):
+            max_acc_2 = test_acc_temp
+            train_losses_2 = train_loss_temp
+            train_accs_2 = train_acc_temp
 
-# Initializing parameter to vary
-optimizer = 2
-momentum = 0.00001
+train_losses_matrix = []
+train_accs_matrix = []
+test_accs_array = []
 
-for i in range (n_runs):
-    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-    train_losses.append(train_loss)
-    train_accs.append(train_acc)
-    test_accs.append(test_acc)
+train_losses_matrix.append(train_losses)
+train_losses_matrix.append(train_losses_2)
+train_losses_matrix.append(train_losses_3)
 
-    # Varing parameters to test:
-    momentum *= 10    
+train_accs_matrix.append(train_accs)
+train_accs_matrix.append(train_accs_2)
+train_accs_matrix.append(train_accs_3)
 
-my_plt.acc_loss("Acurácia e Erro por Época de treino", n_runs, train_accs, train_losses, test_accs)
+test_accs_array.append(max_acc)
+test_accs_array.append(max_acc_2)
+test_accs_array.append(max_acc_3)
 
-# Restore parameters to initial values
-optimizer = 1
+my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs)
 
+max_acc = max(test_accs_array)
+min_acc = min(test_accs_array)
+
+with open (relative_path + exp + 'Otimizadores', 'w+') as pesos_prox:
+    pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
+    pesos_prox.write("Melhor parametro de " + 'otimizadores' + " :" + str(test_accs_array.index(max(test_accs_array)) +1) )
 
 
 # # # # # # # # # # # # # # # # # # STAGE 2 - VALIDATION # # # # # # # # # # # # # # #
