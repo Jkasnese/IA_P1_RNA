@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc):
+def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir):
 
     # Define picture
     fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
@@ -25,9 +25,13 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc):
 
 
     axes[0].legend()
-    plt.show()
 
-def test_acc(title, test_acc, parameter_name="Número_do_Treino", x_values=None):
+    # To show graph, uncomment line below
+#    plt.show()
+
+    plt.savefig(plot_dir + title + '_ae')
+
+def test_acc(title, test_acc, plot_dir, parameter_name="Número_do_Treino", x_values=None):
 
     # Define picture
     fig, axes = plt.subplots(1, sharex=True, figsize=(12, 8))
@@ -36,13 +40,16 @@ def test_acc(title, test_acc, parameter_name="Número_do_Treino", x_values=None)
     # Axis labels
     axes.set_ylabel("Acurácia no Teste", fontsize=14)
     axes.set_xlabel(parameter_name, fontsize=14)
-    axes.set_xscale(x_values)
 
     # Plot
     if (x_values == None):
         axes.plot(test_acc, color='b', label='A')
     else:
+        axes.set_xscale(x_values)
         axes.plot(x_values, test_acc, color='b', label='A')
 
-    plt.show()
+    # To show graph, uncomment line below
+#    plt.show()
+
+    plt.savefig(plot_dir + title + '_erro')
 

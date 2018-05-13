@@ -33,8 +33,7 @@ def test_acc2(title, test_acc, parameter_name='Número do treino', x_scale=None)
     else:
         axes.plot(x_scale, test_acc, color='b', label='A')
 
-    plt.show()
-
+    plt.savefig('/home/guiga/Desktop/testelib')
 
 test_acc = []
 x_units = []

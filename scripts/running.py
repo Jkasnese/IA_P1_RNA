@@ -11,6 +11,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 # Dir settings
 relative_path = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/'
 exp = relative_path + 'exp/'
+plots = exp + 'plots/'
 
 # File to get data from
 filename = 'Football_Manager_2015'
@@ -64,7 +65,7 @@ for i in range (n_runs):
         test_accs_label.append(test_acc)
     print(i)
 
-my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
+my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plot)
 my_plt.test_acc("Pesos Iniciais próximos", test_accs)
 
 max_acc = max(test_accs)
@@ -79,8 +80,6 @@ train_losses = []
 train_accs = []
 test_accs = []
 test_accs_label = []
-n_runs = 20
-plot_run = 3
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
@@ -89,6 +88,7 @@ for i in range (n_runs):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
+    print(i)
     # Varing parameters to test:
     mean += 0.07
     stddev += 0.0035
