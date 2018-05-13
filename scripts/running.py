@@ -9,7 +9,7 @@ relative_path = '/home/guiga/Desktop/Guiga/UEFEY/6_semestre_sd/IA/P1/'
 exp = relative_path + 'exp/'
 
 # File to get data from
-filename = 'Grand_Theft_Auto_V'
+filename = 'Football_Manager_2015'
 
 # Fetch data
 vocab_size, n_comments, x_train, y_train, x_test, y_test, x_val, y_val, val_comments = fetch_data.one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate=False)
@@ -58,6 +58,7 @@ for i in range (n_runs):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
+        print(test_acc)
     print(i)
 
 my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs_label)
