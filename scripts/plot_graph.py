@@ -45,7 +45,6 @@ def test_acc(title, test_acc, plot_dir, parameter_name="Número_do_Treino", x_va
     if (x_values == None):
         axes.plot(test_acc, color='b', label='A')
     else:
-        axes.set_xscale(x_values)
         axes.plot(x_values, test_acc, color='b', label='A')
 
     # To show graph, uncomment line below
