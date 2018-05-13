@@ -47,8 +47,8 @@ optimizer = 1
 train_losses = []
 train_accs = []
 test_accs = []
-n_runs = 100
-plot_run = 14
+n_runs = 20
+plot_run = 3
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
@@ -56,6 +56,7 @@ for i in range (n_runs):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+    print(i)
 
 my_plt.acc_loss("Pesos Iniciais próximos", int(n_runs/plot_run), train_accs, train_losses, test_accs)
 my_plt.test_acc("Pesos Iniciais próximos", test_accs)
@@ -71,8 +72,8 @@ with open (relative_path + exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
 train_losses = []
 train_accs = []
 test_accs = []
-n_runs = 100
-plot_run = 14
+n_runs = 20
+plot_run = 3
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
@@ -100,7 +101,7 @@ mean = 0.0
 stddev = 0.35
 
 
-def vary(name, parameter_init, vary, n_runs=100, plot_run=14):
+def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
     train_losses = []
     train_accs = []
     test_accs = []
@@ -130,6 +131,7 @@ def vary(name, parameter_init, vary, n_runs=100, plot_run=14):
         if (test_acc > max_acc):
             max_acc = test_acc
             best_parameter = parameter
+        print(i)
 
         # Varing parameters to test:
         parameter += vary
@@ -152,14 +154,14 @@ def vary(name, parameter_init, vary, n_runs=100, plot_run=14):
 best_hidden = vary("Numero_de_Neuronios", 31, 25)
 
 # # # # TESTING FOR LEARNING RATE # # # #
-best_learning = vary("Taxa_de_Aprendizagem", 0.001, 0.05)
+best_learning = vary("Taxa_de_Aprendizagem", 0.001, 0.25)
 
 # # # # TESTING FOR BATCH_SIZE # # # #
 best_batch = vary("Tamanho_do_Batch", 1, 10)
 
 # # # # TESTING FOR MOMENTUM # # # #
 optimizer = 2
-best_momentum = vary("Variacao_do_Momento", 0.001, 0.01)
+best_momentum = vary("Variacao_do_Momento", 0.001, 0.05)
 
 # Restore parameters to initial values
 optimizer = 1
@@ -181,49 +183,43 @@ train_losses_3 = []
 train_accs_3 = []
 max_acc_3 = 0
 
-n_runs = 90
-max_acc = 0
-best_parameter = 0
-
-for i in range(3):
+for i in range(5):
     # Generating weights and biases
-    w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+    w1, w2, b1, b2, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
 
     # Saving initial weights and biases
     weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 
-    # Running the rest with same weights and biases
-    for j in range (10):
-        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
-
-        # Save best parameter value
-        if (test_acc_temp > max_acc_1):
-            max_acc_1 = test_acc_temp
-            train_losses = train_loss_temp
-            train_accs = train_acc_temp
+    # Save best parameter value
+    if (test_acc_temp > max_acc_1):
+        max_acc_1 = test_acc_temp
+        train_losses = train_loss_temp
+        train_accs = train_acc_temp
 
     # Varing parameters to test:
     optimizer += 1
 
-    # Running the rest with same weights and biases
-    for j in range (10):
-        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
 
-        # Save best parameter value
-        if (test_acc_temp > max_acc_2):
-            max_acc_2 = test_acc_temp
-            train_losses_2 = train_loss_temp
-            train_accs_2 = train_acc_temp
+    # Save best parameter value
+    if (test_acc_temp > max_acc_2):
+        max_acc_2 = test_acc_temp
+        train_losses_2 = train_loss_temp
+        train_accs_2 = train_acc_temp
+    
+    # Varing parameters to test:
+    optimizer += 1
 
-    # Running the rest with same weights and biases
-    for j in range (10):
-        w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
 
-        # Save best parameter value
-        if (test_acc_temp > max_acc_2):
-            max_acc_2 = test_acc_temp
-            train_losses_2 = train_loss_temp
-            train_accs_2 = train_acc_temp
+    # Save best parameter value
+    if (test_acc_temp > max_acc_2):
+        max_acc_2 = test_acc_temp
+        train_losses_2 = train_loss_temp
+        train_accs_2 = train_acc_temp
+    
+    # Varing parameters to test:
+    optimizer = 1
 
 train_losses_matrix = []
 train_accs_matrix = []
