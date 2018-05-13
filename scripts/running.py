@@ -83,6 +83,7 @@ with open (exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
 train_losses = []
 train_accs = []
 test_accs = []
+labels = []
 test_accs_label = []
 x_value = []
 name = 'Pesos_Iniciais_Distantes'
@@ -94,6 +95,7 @@ for i in range (n_runs):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        labels.append(mean+stddev)
         test_accs_label.append(test_acc)
     print(i)
     # Varing parameters to test:
@@ -101,7 +103,7 @@ for i in range (n_runs):
     stddev += 0.0035
 
 
-my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.acc_loss("Pesos Iniciais distantes", int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
 my_plt.test_acc("Pesos Iniciais distantes", test_accs, plots, name, x_value)
 
 max_acc = max(test_accs)
@@ -119,7 +121,7 @@ stddev = 0.35
 
 #def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
 name = "Numero_de_Neuronios"
-h_hidden = 50
+n_hidden = 50
 vary = 50
 train_losses = []
 train_accs = []
@@ -133,7 +135,7 @@ best_hidden = 0
 
 # Running the rest with same weights and biases
 for i in range (n_runs):
-    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
+    w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
     test_accs.append(test_acc)
     x_value.append(n_hidden)
     if (i % plot_run == 0):
@@ -197,7 +199,7 @@ for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
     x_value.append(learning_rate)
-    if (i % plot_run == 0):
+    if (i % plot_run == 2):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         labels.append(learning_rate)
@@ -257,7 +259,7 @@ for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
     x_value.append(batch_size)
-    if (i % plot_run == 0):
+    if (i % plot_run == 2):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         labels.append(batch_size)
@@ -318,7 +320,7 @@ for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
     x_value.append(momentum)
-    if (i % plot_run == 0):
+    if (i % plot_run == 2):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         labels.append(momentum)
@@ -424,7 +426,7 @@ my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array
 max_acc = max(test_accs_array)
 min_acc = min(test_accs_array)
 
-with open (relative_path + exp + 'Otimizadores', 'w+') as pesos_prox:
+with open (exp + 'Otimizadores', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
     pesos_prox.write("Melhor parametro de " + 'otimizadores' + " :" + str(test_accs_array.index(max(test_accs_array)) +1) )
 

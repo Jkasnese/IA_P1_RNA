@@ -47,6 +47,7 @@ for filename in os.listdir(reports):
             # Remainder positive comments goest to test
 
             test_negative = int(negative_comments*0.1)
+            test_positive = test_negative
             print("test negative: " + str(test_negative))
             validation_negative = int(negative_comments*0.09)
             print("val negative: " + str(validation_negative))
@@ -112,7 +113,7 @@ for filename in os.listdir(reports):
                                                 train_txt.write(line_buffer)
                                                 train_txt.write(line)
                                                 train_wr_pos += 1
-                                            else:
+                                            elif (test_wr_pos < test_positive):
                                                 test_txt.write(line_buffer)
                                                 test_txt.write(line)
                                                 test_wr_pos += 1                                                    

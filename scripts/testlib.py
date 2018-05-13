@@ -41,4 +41,4 @@ for i in range(5):
     test_acc.append(i)
     x_units.append(i/10.0)
 
-test_acc2("afef", test_acc)
+test_acc2("afef", test_acc, 'aefaef', x_units)

@@ -17,7 +17,7 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir, labels=
     axes[1].set_ylabel("Acurácia", fontsize=14)
     axes[1].set_xlabel("Época", fontsize=14)
 
-    if (labels=None):
+    if (labels==None):
         for i in range(n_runs):
             # Colors range from C0 to C9
             label = curves[i] + str(test_acc[i])
