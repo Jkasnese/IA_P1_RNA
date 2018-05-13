@@ -55,6 +55,7 @@ test_accs = []
 test_accs_label = []
 n_runs = 20
 plot_run = 3
+name = 'Pesos_Iniciais_Distantes'
 
 for i in range (n_runs):
     w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
@@ -142,8 +143,8 @@ weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
+    x_value.append(n_hidden)
     if (i % plot_run == 0):
-        x_value.append(n_hidden)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -200,8 +201,8 @@ weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
+    x_value.append(learning_rate)
     if (i % plot_run == 0):
-        x_value.append(learning_rate)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -257,8 +258,8 @@ weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
+    x_value.append(batch_size)
     if (i % plot_run == 0):
-        x_value.append(batch_size)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -316,8 +317,8 @@ weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 for i in range (n_runs-1):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
+    x_value.append(momentum)
     if (i % plot_run == 0):
-        x_value.append(momentum)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
         test_accs_label.append(test_acc)
@@ -449,8 +450,9 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
     for i in range (n_runs-1):
         w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
         test_accs.append(test_acc)
+        x_value.append()    
+
         if (i % plot_run == 0):
-            x_value.append()
             train_losses.append(train_loss)
             train_accs.append(train_acc)
             test_accs_label.append(test_acc)
