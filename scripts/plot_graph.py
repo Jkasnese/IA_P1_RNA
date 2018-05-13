@@ -11,7 +11,7 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir, labels=
     curves = ['A-', 'B-', 'C-', 'D-', 'E-', 'F-', 'G-']
 
     # First subplot LOSS
-    axes[0].set_ylabel("Erro", fontsize=14)
+    axes[0].set_ylabel("Erro Absoluto Médio", fontsize=14)
     
     # Second subplot ACC
     axes[1].set_ylabel("Acurácia", fontsize=14)

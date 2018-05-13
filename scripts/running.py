@@ -52,7 +52,7 @@ optimizer = 1
 n_runs = 20
 plot_run = 3
 
-"""
+
 # # # # TESTING FOR CLOSE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
 train_accs = []
@@ -77,7 +77,7 @@ min_acc = min(test_accs)
 
 with open (exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
-"""
+
 
 # # # # TESTING FOR WIDE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
