@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir):
+def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir, labels=None):
 
     # Define picture
     fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
@@ -17,11 +17,18 @@ def acc_loss(title, n_runs, matrix_acc, matrix_loss, test_acc, plot_dir):
     axes[1].set_ylabel("Acurácia", fontsize=14)
     axes[1].set_xlabel("Época", fontsize=14)
 
-    for i in range(n_runs):
-        # Colors range from C0 to C9
-        label = curves[i] + str(test_acc[i])
-        axes[0].plot(matrix_loss[i][:], color=colors[i], label=label)
-        axes[1].plot(matrix_acc[i][:], color=colors[i], label=label)
+    if (labels=None):
+        for i in range(n_runs):
+            # Colors range from C0 to C9
+            label = curves[i] + str(test_acc[i])
+            axes[0].plot(matrix_loss[i][:], color=colors[i], label=label)
+            axes[1].plot(matrix_acc[i][:], color=colors[i], label=label)
+    else:
+        for i in range(n_runs):
+            # Colors range from C0 to C9
+            label = str(labels[i]) + ":" + str(test_acc[i])
+            axes[0].plot(matrix_loss[i][:], color=colors[i], label=label)
+            axes[1].plot(matrix_acc[i][:], color=colors[i], label=label)
 
 
     axes[0].legend()

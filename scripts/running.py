@@ -119,12 +119,13 @@ stddev = 0.35
 
 #def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
 name = "Numero_de_Neuronios"
-h_hidden = 31
-vary = 25
+h_hidden = 50
+vary = 50
 train_losses = []
 train_accs = []
 test_accs = []
 test_accs_label = []
+labels = []
 x_value = []
 
 max_acc = 0
@@ -138,6 +139,7 @@ for i in range (n_runs):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        labels.append(n_hidden)
         test_accs_label.append(test_acc)
 
     # Save best parameter value
@@ -149,7 +151,7 @@ for i in range (n_runs):
     # Varing parameters to test:
     n_hidden += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
 my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
@@ -169,6 +171,7 @@ vary = 0.25
 train_losses = []
 train_accs = []
 test_accs = []
+labels = []
 test_accs_label = []
 x_value = []
 
@@ -180,6 +183,7 @@ x_value.append(learning_rate)
 test_accs.append(test_acc)
 train_losses.append(train_loss)
 train_accs.append(train_acc)
+labels.append(learning_rate)
 test_accs_label.append(test_acc)
 
 max_acc = test_acc
@@ -196,6 +200,7 @@ for i in range (n_runs-1):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        labels.append(learning_rate)
         test_accs_label.append(test_acc)
 
     # Save best parameter value
@@ -207,7 +212,7 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     learning_rate += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
 my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
@@ -226,6 +231,7 @@ vary = 10
 train_losses = []
 train_accs = []
 test_accs = []
+labels = []
 test_accs_label = []
 x_value = []
 
@@ -237,6 +243,7 @@ x_value.append(batch_size)
 test_accs.append(test_acc)
 train_losses.append(train_loss)
 train_accs.append(train_acc)
+labels.append(batch_size)
 test_accs_label.append(test_acc)
 
 max_acc = test_acc
@@ -253,6 +260,7 @@ for i in range (n_runs-1):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        labels.append(batch_size)
         test_accs_label.append(test_acc)
 
     # Save best parameter value
@@ -264,7 +272,7 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     batch_size += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
 my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
@@ -278,13 +286,13 @@ batch_size = best_batch
 
 # # # # TESTING FOR MOMENTUM # # # #
 optimizer = 2
-best_momentum = vary("Variacao_do_Momento", 0.001, 0.05)
 name = "Variação_do_Momento"
 momentum = 0.001
 vary = 0.05
 train_losses = []
 train_accs = []
 test_accs = []
+labels = []
 test_accs_label = []
 x_value = []
 
@@ -296,6 +304,7 @@ x_value.append(momentum)
 test_accs.append(test_acc)
 train_losses.append(train_loss)
 train_accs.append(train_acc)
+labels.append(momentum)
 test_accs_label.append(test_acc)
 
 max_acc = test_acc
@@ -312,6 +321,7 @@ for i in range (n_runs-1):
     if (i % plot_run == 0):
         train_losses.append(train_loss)
         train_accs.append(train_acc)
+        labels.append(momentum)
         test_accs_label.append(test_acc)
 
     # Save best parameter value
@@ -323,7 +333,7 @@ for i in range (n_runs-1):
     # Varing parameters to test:
     momentum += vary
 
-my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
 my_plt.test_acc(name, test_accs, plots, name, x_value)
 
 min_acc = min(test_accs)
@@ -422,6 +432,7 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
     train_losses = []
     train_accs = []
     test_accs = []
+    labels = []
     test_accs_label = []
     x_value = []
 
@@ -446,6 +457,7 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
         if (i % plot_run == 0):
             train_losses.append(train_loss)
             train_accs.append(train_acc)
+            labels.append(labels)
             test_accs_label.append(test_acc)
 
         # Save best parameter value
@@ -457,7 +469,7 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
         # Varing parameters to test:
         parameter += vary
 
-    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots)
+    my_plt.acc_loss(name, int(n_runs/plot_run), train_accs, train_losses, test_accs_label, plots, labels=labels)
     my_plt.test_acc(name, test_accs, name, plots)
 
     min_acc = min(test_accs)
