@@ -127,24 +127,11 @@ test_accs = []
 test_accs_label = []
 x_value = []
 
-# Generating weights and biases
-w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-
-# Plot first value
-x_value.append(n_hidden)
-test_accs.append(test_acc)
-train_losses.append(train_loss)
-train_accs.append(train_acc)
-test_accs_label.append(test_acc)
-
-max_acc = test_acc
-best_hidden = n_hidden
-
-# Saving initial weights and biases
-weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+max_acc = 0
+best_hidden = 0
 
 # Running the rest with same weights and biases
-for i in range (n_runs-1):
+for i in range (n_runs):
     w12, w22, b12, b22, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
     test_accs.append(test_acc)
     x_value.append(n_hidden)
