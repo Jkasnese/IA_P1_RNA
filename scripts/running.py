@@ -397,10 +397,10 @@ for i in range(5):
     w12, w22, b12, b22, test_acc_temp, train_loss_temp, train_acc_temp = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=weights, biases=biases)
 
     # Save best parameter value
-    if (test_acc_temp > max_acc_2):
-        max_acc_2 = test_acc_temp
-        train_losses_2 = train_loss_temp
-        train_accs_2 = train_acc_temp
+    if (test_acc_temp > max_acc_3):
+        max_acc_3 = test_acc_temp
+        train_losses_3 = train_loss_temp
+        train_accs_3 = train_acc_temp
     
     # Varing parameters to test:
     optimizer = 1
@@ -428,7 +428,7 @@ min_acc = min(test_accs_array)
 
 with open (exp + 'Otimizadores', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
-    pesos_prox.write("Melhor parametro de " + 'otimizadores' + " :" + str(test_accs_array.index(max(test_accs_array)) +1) )
+    pesos_prox.write("\nMelhor parametro de " + 'otimizadores' + " : " + str(test_accs_array.index(max(test_accs_array)) +1) )
 
 def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
     train_losses = []
