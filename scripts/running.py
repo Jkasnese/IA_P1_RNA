@@ -64,7 +64,7 @@ my_plt.test_acc("Pesos Iniciais próximos", test_accs)
 max_acc = max(test_accs)
 min_acc = min(test_accs)
 
-with open (relative_path + exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
+with open (exp + 'pesos_iniciais_proximos', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
 
 
@@ -92,7 +92,7 @@ my_plt.test_acc("Pesos Iniciais distantes", test_accs)
 max_acc = max(test_accs)
 min_acc = min(test_accs)
 
-with open (relative_path + exp + 'pesos_iniciais_distantes', 'w+') as pesos_prox:
+with open (exp + 'pesos_iniciais_distantes', 'w+') as pesos_prox:
     pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
 
 #TODO: save 3 best parameters to find a best combination later
@@ -141,7 +141,7 @@ def vary(name, parameter_init, vary, n_runs=20, plot_run=3):
 
     min_acc = min(test_accs)
 
-    with open (relative_path + exp + name, 'w+') as pesos_prox:
+    with open (exp + name, 'w+') as pesos_prox:
         pesos_prox.write("Máxima acurácia: " + str(max_acc) + "\nMínima acurácia: " + str(min_acc) + "\nVariação máxima: " + str(max_acc - min_acc))
         pesos_prox.write("Melhor parametro de " + name + " :" + str(best_parameter))
 
