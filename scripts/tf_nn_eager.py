@@ -16,10 +16,7 @@ def multilayer_perceptron(x, weights, biases):
 def next_batch(step, batch_size, matrix):
     return matrix[step*batch_size:batch_size+step*batch_size]
 
-def tf_eager(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=None, biases=None): 
-
-    # Parameters
-    display_step = 1
+def tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, weights=None, biases=None): 
 
     # Train placeholders
     X = tf.placeholder("float", [None, vocab_size], name="X")
@@ -57,6 +54,7 @@ def tf_eager(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, ba
         initial_biases_2 = biases['out'].read_value().eval()
 
         train_loss_results = []
+        train_accuracy_results = []
 
         # Training cycle
         for epoch in range(epochs):
@@ -75,11 +73,19 @@ def tf_eager(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, ba
                 # Compute average loss
                 avg_cost += c / total_batch
 
-            # Display logs per epoch step
-            if epoch % display_step == 0:
-                # Loss
-                print("Epoch:", '%04d' % (epoch+1), "cost={:.9f}".format(avg_cost))
-                train_loss_results.append(avg_cost)
+            ### ACCURACY
+            # Model and define correct
+            model = tf.nn.softmax(logits)
+            correct = tf.equal(tf.argmax(model, 1), tf.argmax(Y, 1))
+            accuracy = tf.reduce_mean(tf.cast(correct, "float"))
+
+            ## Train
+            # Train loss
+            train_loss_results.append(avg_cost)
+
+            # training accuracy on training set
+            train_acc = accuracy.eval({X: x_train, Y: y_train})
+            train_accuracy_results.append(train_acc)
 
 
         print("Optimization Finished!")
@@ -90,12 +96,12 @@ def tf_eager(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, ba
 
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-        print("Accuracy:", accuracy.eval({X: x_test, Y: y_test}))
+        test_accuracy = accuracy.eval({X: x_test, Y: y_test})
 
         # TODO: Return arrays with data from training to compare with others and plot graphs.
-        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, acc
+        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_accuracy, train_loss_results, train_accuracy_results
 
-def nn_val_set(name, vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val, weights=None, biases=None):
+def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val, weights=None, biases=None):
     
     # Parameters
     display_step = 1
