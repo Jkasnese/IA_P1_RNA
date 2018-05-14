@@ -25,7 +25,7 @@ stddev = 0.35
 mean = 0.0
 
 # Number of neurons in hidden layer
-n_hidden = 256
+n_hidden = 300
 best_hidden = 0
 
 # Learning rate
@@ -33,12 +33,12 @@ learning_rate = 0.1
 best_learning = 0
 
 # Momentum
-momentum = 0.01
+momentum = 0.02
 best_momentum = 0
 
 # Number of elements per batch
 batch_size = 100
-epochs = 30
+epochs = 60
 best_batch = 0
 
 ## Optimizer
@@ -52,7 +52,7 @@ optimizer = 1
 n_runs = 20
 plot_run = 3
 
-
+'''
 # # # # TESTING FOR CLOSE INITIAL WEIGHTS/BIASES # # # #
 train_losses = []
 train_accs = []
@@ -168,8 +168,8 @@ n_hidden = best_hidden
 # # # # TESTING FOR LEARNING RATE # # # #
 #def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
 name = "Taxa_de_Aprendizagem"
-learning_rate = 0.001
-vary = 0.25
+learning_rate = 0.01
+vary = 0.02
 train_losses = []
 train_accs = []
 test_accs = []
@@ -225,11 +225,11 @@ with open (exp + name, 'w+') as pesos_prox:
 
 # Change to best value 
 learning_rate = best_learning
-
+'''
 # # # # TESTING FOR BATCH_SIZE # # # #
 name = "Tamanho_do_batch"
-batch_size = 1
-vary = 10
+batch_size = 60
+vary = 60
 train_losses = []
 train_accs = []
 test_accs = []
@@ -285,7 +285,7 @@ with open (exp + name, 'w+') as pesos_prox:
 
 # Change to best value 
 batch_size = best_batch
-
+'''
 # # # # TESTING FOR MOMENTUM # # # #
 optimizer = 2
 name = "Variação_do_Momento"
@@ -349,15 +349,18 @@ momentum = best_momentum
 
 # Restore parameters to initial values
 optimizer = 1
-
+'''
+'''
 # # # # TESTING FOR OPTIMIZERS # # # #
+name = 'Optimizers'
 test_acc_temp = []
 train_loss_temp = []
 train_acc_temp = []
+labels = ['SDG', 'Momentum', 'Ada']
 
 train_losses = []
 train_accs = []
-max_acc_1 = 0
+max_acc = 0
 
 train_losses_2 = []
 train_accs_2 = []
@@ -375,8 +378,8 @@ for i in range(5):
     weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 
     # Save best parameter value
-    if (test_acc_temp > max_acc_1):
-        max_acc_1 = test_acc_temp
+    if (test_acc_temp > max_acc):
+        max_acc = test_acc_temp
         train_losses = train_loss_temp
         train_accs = train_acc_temp
 
@@ -421,7 +424,7 @@ test_accs_array.append(max_acc)
 test_accs_array.append(max_acc_2)
 test_accs_array.append(max_acc_3)
 
-my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array, plots)
+my_plt.acc_loss(name, 3, train_accs_matrix, train_losses_matrix, test_accs_array, plots,labels=labels)
 
 max_acc = max(test_accs_array)
 min_acc = min(test_accs_array)
@@ -481,11 +484,60 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
         pesos_prox.write("Melhor parametro de " + name + " :" + str(best_parameter))
 
     return best_parameter
-
+'''
 # # # # # # # # # # # # # # # # # # STAGE 2 - VALIDATION # # # # # # # # # # # # # # #
+'''
+## Test validation
+# Parameters
+optimizer = 2
+momentum = 0.02
+
+name = 'Validation x No Validation'
+labels=['Train', 'Val', 'Val']
+tests_accs = []
+
+train_loss = []
+train_acc = []
+test_acc = 0
+
+tval_loss = []
+tval_acc = []
+test_val_acc = 0
+val_loss = []
+val_acc = []
 
 
- 
+
+
+# Normal run
+w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+
+# Saving initial weights and biases
+weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+
+# Validation run
+w11, w22, b11, b22, test_val_acc, tval_loss, tval_acc, val_loss, val_acc = my_nn.nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val, weights=weights, biases=biases)
+
+# Group data
+matrix_loss = []
+matrix_acc = []
+
+matrix_loss.append(train_loss)
+matrix_loss.append(tval_loss)
+matrix_loss.append(val_loss)
+
+matrix_acc.append(train_acc)
+matrix_acc.append(tval_acc)
+matrix_acc.append(val_acc)
+
+tests_accs.append(test_acc)
+tests_accs.append(test_val_acc)
+tests_accs.append(test_val_acc)
+
+# Plot. train acc and loss should be equal to tval loss and acc.
+my_plt.acc_loss(name, 3, matrix_acc, matrix_loss, tests_accs, plots, labels=labels)
+
+'''
 
 
 # First "batch" of comparison. First training creates weights/biases, subsequent trainings use the same.

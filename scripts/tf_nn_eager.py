@@ -142,6 +142,8 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
         train_accuracy_results = []
         validation_loss_results = []
         validation_accuracy_results = []
+    
+        min_val_cost = 9999999
 
         # Training cycle
         for epoch in range(epochs):
@@ -182,20 +184,38 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
 
             ## Validation
             # Validation loss
+            if (avg_val_cost < min_val_cost):
+                w1 = weights['h1'].read_value().eval()
+                w2 = weights['out'].read_value().eval()
+                b1 = biases['b1'].read_value().eval()
+                b2 = biases['out'].read_value().eval()
+
             validation_loss_results.append(avg_val_cost)
 
             # Compute validation accuracy on training set
             val_acc = accuracy.eval({X: x_val, Y: y_val})
             validation_accuracy_results.append(val_acc) 
 
+        saved_weights, saved_biases = gen_wb.init_values(w1, w2, b1, b2)
+        init2 = tf.global_variables_initializer()
+        sess.run(init2)
+
+        print(biases['out'].read_value().eval())
+        print(saved_biases)
+        print(saved_biases['out'].read_value().eval())
+
+        # Construct final model (best accuracy on validation set)
+        logits2 = multilayer_perceptron(X, saved_weights, saved_biases)
+
         # Test model
-        pred = tf.nn.softmax(logits)  # Apply softmax to logits
+        pred = tf.nn.softmax(logits2)  # Apply softmax to logits
         correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
 
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-
-
+        test_acc = accuracy.eval({X: x_test, Y: y_test})
+        print(test_acc)
 
         # TODO: Return arrays with data from training to compare with others and plot graphs.
+#        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_accuracy, train_loss_results, train_accuracy_results
         return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_acc, train_loss_results, train_accuracy_results, validation_loss_results, validation_accuracy_results
