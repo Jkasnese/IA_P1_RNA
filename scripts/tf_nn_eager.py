@@ -143,7 +143,8 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
         validation_loss_results = []
         validation_accuracy_results = []
     
-        min_val_cost = 9999999
+        prev_val_cost = 9999999
+        prev_val_acc = 0
 
         # Training cycle
         for epoch in range(epochs):
@@ -166,7 +167,7 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
 
                 # Validation loss
                 val_cost = sess.run([loss_op], feed_dict={X: x_val, Y: y_val})[0]
-                avg_val_cost += val_cost / val_comments
+                avg_val_cost = val_cost
 
             ### ACCURACY
             # Model and define correct
@@ -178,38 +179,68 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
             # Train loss
             train_loss_results.append(avg_cost)
 
-            # training accuracy on training set
+            # Training accuracy on training set
             train_acc = accuracy.eval({X: x_train, Y: y_train})
             train_accuracy_results.append(train_acc)
-
-            ## Validation
-            # Validation loss
-            if (avg_val_cost < min_val_cost):
-                w1 = weights['h1'].read_value().eval()
-                w2 = weights['out'].read_value().eval()
-                b1 = biases['b1'].read_value().eval()
-                b2 = biases['out'].read_value().eval()
-
-            validation_loss_results.append(avg_val_cost)
 
             # Compute validation accuracy on training set
             val_acc = accuracy.eval({X: x_val, Y: y_val})
             validation_accuracy_results.append(val_acc) 
 
-        saved_weights, saved_biases = gen_wb.init_values(w1, w2, b1, b2)
-        init2 = tf.global_variables_initializer()
-        sess.run(init2)
+            validation_loss_results.append(avg_val_cost)
 
-        print(biases['out'].read_value().eval())
-        print(saved_biases)
-        print(saved_biases['out'].read_value().eval())
+            ## Validation
+            # Validation loss
+            print(str(prev_val_acc) + "   |   " + str(val_acc))
+            print(str(prev_val_cost) + "   |   " + str(val_cost))
+            if (val_cost < prev_val_cost):
+                w1 = weights['h1'].read_value().eval()
+                w2 = weights['out'].read_value().eval()
+                b1 = biases['b1'].read_value().eval()
+                b2 = biases['out'].read_value().eval()
+                print("Entrou")
+                prev_val_acc = val_acc
+                prev_val_cost = val_cost
+            else:
+                print("Nao entrou")
+
+
+
+        ## Standard training
+        # Test model
+        pred = tf.nn.softmax(logits)  # Apply softmax to logits
+        correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+
+        # Calculate accuracy
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+        test_accuracy = accuracy.eval({X: x_test, Y: y_test})
+        print(test_accuracy)
+
+        ## Validation
+        # Construct weights 
+        saved_weights, saved_biases = gen_wb.init_values(w1, w2, b1, b2)
 
         # Construct final model (best accuracy on validation set)
         logits2 = multilayer_perceptron(X, saved_weights, saved_biases)
 
+        loss_op2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
+        logits=logits2, labels=Y))
+
+        init2 = tf.global_variables_initializer()
+        sess.run(init2)
+        val_cost = sess.run([loss_op2], feed_dict={X: x_val, Y: y_val})[0]
+        #print(val_cost)
+
+        # Check if weights are really different
+        #print(biases['out'].read_value().eval())
+        #print(saved_biases['out'].read_value().eval())
+
         # Test model
         pred = tf.nn.softmax(logits2)  # Apply softmax to logits
         correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+
+        #print(logits[0].read_value().eval())
+        #print(logits2[0].read_value().eval())
 
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))

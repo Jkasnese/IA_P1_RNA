@@ -25,7 +25,7 @@ stddev = 0.35
 mean = 0.0
 
 # Number of neurons in hidden layer
-n_hidden = 300
+n_hidden = 1000
 best_hidden = 0
 
 # Learning rate
@@ -37,8 +37,8 @@ momentum = 0.02
 best_momentum = 0
 
 # Number of elements per batch
-batch_size = 100
-epochs = 60
+batch_size = 400
+epochs = 30
 best_batch = 0
 
 ## Optimizer
@@ -226,6 +226,7 @@ with open (exp + name, 'w+') as pesos_prox:
 # Change to best value 
 learning_rate = best_learning
 '''
+'''
 # # # # TESTING FOR BATCH_SIZE # # # #
 name = "Tamanho_do_batch"
 batch_size = 60
@@ -285,6 +286,7 @@ with open (exp + name, 'w+') as pesos_prox:
 
 # Change to best value 
 batch_size = best_batch
+'''
 '''
 # # # # TESTING FOR MOMENTUM # # # #
 optimizer = 2
@@ -486,14 +488,13 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
     return best_parameter
 '''
 # # # # # # # # # # # # # # # # # # STAGE 2 - VALIDATION # # # # # # # # # # # # # # #
-'''
 ## Test validation
 # Parameters
-optimizer = 2
-momentum = 0.02
+#optimizer = 2
+#momentum = 0.02
 
 name = 'Validation x No Validation'
-labels=['Train', 'Val', 'Val']
+labels=['Train', 'Train_Val', 'Val']
 tests_accs = []
 
 train_loss = []
@@ -510,13 +511,13 @@ val_acc = []
 
 
 # Normal run
-w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
+#w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
 
 # Saving initial weights and biases
-weights, biases = gen_wb.init_values(w1, w2, b1, b2)
+#weights, biases = gen_wb.init_values(w1, w2, b1, b2)
 
 # Validation run
-w11, w22, b11, b22, test_val_acc, tval_loss, tval_acc, val_loss, val_acc = my_nn.nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val, weights=weights, biases=biases)
+w11, w22, b11, b22, test_val_acc, tval_loss, tval_acc, val_loss, val_acc = my_nn.nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val)
 
 # Group data
 matrix_loss = []
@@ -537,9 +538,9 @@ tests_accs.append(test_val_acc)
 # Plot. train acc and loss should be equal to tval loss and acc.
 my_plt.acc_loss(name, 3, matrix_acc, matrix_loss, tests_accs, plots, labels=labels)
 
-'''
 
 
+#Testes:
 # First "batch" of comparison. First training creates weights/biases, subsequent trainings use the same.
 # After 10 runs with hyperparameter variations, change the initial weights (by training a new session without weights) and train the rest.
 # That way, we have combined mesures.
