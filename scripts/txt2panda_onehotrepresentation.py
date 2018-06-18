@@ -81,15 +81,13 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
             even_line = False
             line_cont = 0
             x_train = numpy.zeros((total_comments, dimension), dtype=numpy.float64)
-            y_train = numpy.zeros((total_comments, 2), dtype=numpy.float64)
+            y_train = numpy.zeros((total_comments), dtype=numpy.int32)
             for line in f:
                 if (even_line):
                     if (line == 'not recommended\n'):
-                        y_train[line_cont][0] = 0.0
-                        y_train[line_cont][1] = 1.0
+                        y_train[line_cont] = 0
                     else:
-                        y_train[line_cont][0] = 1.0
-                        y_train[line_cont][1] = 0.0
+                        y_train[line_cont] = 1
                     even_line = False
                     line_cont += 1
                 else:
@@ -112,15 +110,13 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                     even_line = False
                     line_cont = 0
                     x_test = numpy.zeros((test_comments, dimension), dtype=numpy.float64)
-                    y_test = numpy.zeros((test_comments, 2), dtype=numpy.float64)
+                    y_test = numpy.zeros((test_comments), dtype=numpy.int32)
                     for line in test:
                         if (even_line):
                             if (line == 'not recommended\n'):
-                                y_test[line_cont][0] = 0.0
-                                y_test[line_cont][1] = 1.0
+                                y_test[line_cont] = 0
                             else:
-                                y_test[line_cont][0] = 1.0
-                                y_test[line_cont][1] = 0.0
+                                y_test[line_cont] = 1
                             even_line = False
                             line_cont += 1
                         else:
@@ -143,15 +139,13 @@ def one_hot_representation_load(filename, MINIMUM_WORD_APPEARANCE = 5, translate
                     even_line = False
                     line_cont = 0
                     x_val = numpy.zeros((val_comments, dimension), dtype=numpy.float64)
-                    y_val = numpy.zeros((val_comments, 2), dtype=numpy.float64)
+                    y_val = numpy.zeros((val_comments), dtype=numpy.int32)
                     for line in val:
                         if (even_line):
                             if (line == 'not recommended\n'):
-                                y_val[line_cont][0] = 0.0
-                                y_val[line_cont][1] = 1.0
+                                y_val[line_cont] = 0
                             else:
-                                y_val[line_cont][0] = 1.0
-                                y_val[line_cont][1] = 0.0
+                                y_val[line_cont] = 1
                             even_line = False
                             line_cont += 1
                         else:

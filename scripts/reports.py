@@ -94,10 +94,10 @@ for filename in os.listdir(source):
                 out.write("total coments: " + str(total_comments) + '\n' + " pos: " + str(positive_comments) + '\n' + " neg: " + str(negative_comments) + '\n')
 
             # Write dictionaries
-            with open(vectors + name + "_w2i", 'w+') as table_w2i:
-                json.dump(word2int, table_w2i)
-            with open(vectors + name + "_i2w", 'w+') as table_i2w:
-                json.dump(int2word, table_i2w)
+#            with open(vectors + name + "_w2i", 'w+') as table_w2i:
+ #               json.dump(word2int, table_w2i)
+  #          with open(vectors + name + "_i2w", 'w+') as table_i2w:
+   #             json.dump(int2word, table_i2w)
 
 
 

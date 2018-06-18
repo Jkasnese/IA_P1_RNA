@@ -25,11 +25,11 @@ stddev = 0.35
 mean = 0.0
 
 # Number of neurons in hidden layer
-n_hidden = 1000
+n_hidden = 200
 best_hidden = 0
 
 # Learning rate
-learning_rate = 0.1
+learning_rate = 0.001
 best_learning = 0
 
 # Momentum
@@ -37,8 +37,8 @@ momentum = 0.02
 best_momentum = 0
 
 # Number of elements per batch
-batch_size = 400
-epochs = 30
+batch_size = 800
+epochs = 60
 best_batch = 0
 
 ## Optimizer
@@ -494,15 +494,12 @@ def vary(variable_name, name, parameter_init, vary, n_runs=20, plot_run=3):
 #momentum = 0.02
 
 name = 'Validation x No Validation'
-labels=['Train', 'Train_Val', 'Val']
+labels=['Test', 'Validation', 'Train']
 tests_accs = []
 
 train_loss = []
 train_acc = []
-test_acc = 0
 
-tval_loss = []
-tval_acc = []
 test_val_acc = 0
 val_loss = []
 val_acc = []
@@ -510,30 +507,26 @@ val_acc = []
 
 
 
-# Normal run
-#w1, w2, b1, b2, test_acc, train_loss, train_acc = my_nn.tf_eager(vocab_size, learning_rate, momentum, n_hidden, n_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test)
-
-# Saving initial weights and biases
-#weights, biases = gen_wb.init_values(w1, w2, b1, b2)
-
 # Validation run
-w11, w22, b11, b22, test_val_acc, tval_loss, tval_acc, val_loss, val_acc = my_nn.nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val)
+#for i in range(50):
+w11, w22, b11, b22, test_val_acc, train_loss, train_acc, val_loss, val_acc, test_accs_results, test_acc_noval, test_loss = my_nn.nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_comments, batch_size, epochs, optimizer, mean, stddev, x_train, y_train, x_test, y_test, x_val, y_val)
 
 # Group data
 matrix_loss = []
 matrix_acc = []
 
-matrix_loss.append(train_loss)
-matrix_loss.append(tval_loss)
+matrix_loss.append(test_loss)
 matrix_loss.append(val_loss)
+matrix_loss.append(train_loss)
 
-matrix_acc.append(train_acc)
-matrix_acc.append(tval_acc)
+matrix_acc.append(test_accs_results)
 matrix_acc.append(val_acc)
+matrix_acc.append(train_acc)
 
-tests_accs.append(test_acc)
 tests_accs.append(test_val_acc)
 tests_accs.append(test_val_acc)
+tests_accs.append(test_acc_noval)
+
 
 # Plot. train acc and loss should be equal to tval loss and acc.
 my_plt.acc_loss(name, 3, matrix_acc, matrix_loss, tests_accs, plots, labels=labels)

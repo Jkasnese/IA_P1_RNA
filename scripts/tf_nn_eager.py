@@ -105,7 +105,7 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
 
     # Train placeholders
     X = tf.placeholder("float", [None, vocab_size], name="X")
-    Y = tf.placeholder("float", [None, 2], name="Y")
+    Y = tf.placeholder("int64", [None], name="Y")
 
     if (weights == None):
         weights, biases = gen_wb.gen_wb(mean, stddev, vocab_size, n_hidden)
@@ -114,7 +114,7 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
     logits = multilayer_perceptron(X, weights, biases)
 
     # Define train loss
-    loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
+    loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
         logits=logits, labels=Y))
  
     # Define Optimizer
@@ -142,9 +142,13 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
         train_accuracy_results = []
         validation_loss_results = []
         validation_accuracy_results = []
+        ttest_acc_res = []
+        ttest_loss_res = []
     
         prev_val_cost = 9999999
         prev_val_acc = 0
+        min_val_cost = 99999
+        max_val_acc = 0
 
         # Training cycle
         for epoch in range(epochs):
@@ -165,14 +169,16 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
                 # Training loss
                 avg_cost += c / total_batch
 
-                # Validation loss
-                val_cost = sess.run([loss_op], feed_dict={X: x_val, Y: y_val})[0]
-                avg_val_cost = val_cost
+            # Validation loss
+            val_cost = sess.run([loss_op], feed_dict={X: x_val, Y: y_val})[0]
+
+            # Test loss
+            test_loss = sess.run([loss_op], feed_dict={X: x_test, Y: y_test})[0]
 
             ### ACCURACY
             # Model and define correct
             model = tf.nn.softmax(logits)
-            correct = tf.equal(tf.argmax(model, 1), tf.argmax(Y, 1))
+            correct = tf.equal(tf.argmax(model, 1), Y)
             accuracy = tf.reduce_mean(tf.cast(correct, "float"))
 
             ## Train
@@ -187,34 +193,46 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
             val_acc = accuracy.eval({X: x_val, Y: y_val})
             validation_accuracy_results.append(val_acc) 
 
-            validation_loss_results.append(avg_val_cost)
+            # Compute validation accuracy on training set
+            ttest_acc = accuracy.eval({X: x_test, Y: y_test})
+            ttest_acc_res.append(ttest_acc) 
+
+            validation_loss_results.append(val_cost)
+            ttest_loss_res.append(test_loss)
+
+            if (val_acc > max_val_acc):
+                max_val_acc = val_acc
+                accepc = epoch
+
+            if (val_cost < min_val_cost):
+                min_val_cost = val_cost
+                costepc = epoch
 
             ## Validation
             # Validation loss
-            print(str(prev_val_acc) + "   |   " + str(val_acc))
-            print(str(prev_val_cost) + "   |   " + str(val_cost))
-            if (val_cost < prev_val_cost):
+     #       print(str(prev_val_acc) + "   |   " + str(val_acc))
+       #     print(str(prev_val_cost) + "   |   " + str(val_cost))
+            if (val_acc >= prev_val_acc):
+                wepc = epoch
                 w1 = weights['h1'].read_value().eval()
                 w2 = weights['out'].read_value().eval()
                 b1 = biases['b1'].read_value().eval()
                 b2 = biases['out'].read_value().eval()
-                print("Entrou")
+               #print("Entrou")
                 prev_val_acc = val_acc
                 prev_val_cost = val_cost
-            else:
-                print("Nao entrou")
+           # else:
+                #print("Nao entrou")
 
+        print ("Max Acc: " + str(max_val_acc) + "Epoca: " + str(accepc))
+        print ("Min Cost: " + str(min_val_cost) + "Epoca: " + str(costepc))
+        print ("Pesos adquiridos na Epoca: " + str(wepc))
 
 
         ## Standard training
-        # Test model
-        pred = tf.nn.softmax(logits)  # Apply softmax to logits
-        correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
-
         # Calculate accuracy
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         test_accuracy = accuracy.eval({X: x_test, Y: y_test})
-        print(test_accuracy)
+        #print(test_accuracy)
 
         ## Validation
         # Construct weights 
@@ -223,7 +241,7 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
         # Construct final model (best accuracy on validation set)
         logits2 = multilayer_perceptron(X, saved_weights, saved_biases)
 
-        loss_op2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(
+        loss_op2 = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
         logits=logits2, labels=Y))
 
         init2 = tf.global_variables_initializer()
@@ -237,7 +255,7 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
 
         # Test model
         pred = tf.nn.softmax(logits2)  # Apply softmax to logits
-        correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+        correct_prediction = tf.equal(tf.argmax(pred, 1), Y)
 
         #print(logits[0].read_value().eval())
         #print(logits2[0].read_value().eval())
@@ -245,8 +263,8 @@ def nn_val_set(vocab_size, learning_rate, momentum, n_hidden, n_comments, val_co
         # Calculate accuracy
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         test_acc = accuracy.eval({X: x_test, Y: y_test})
-        print(test_acc)
+        print(str(test_accuracy) + " | " + str(test_acc))
 
         # TODO: Return arrays with data from training to compare with others and plot graphs.
 #        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_accuracy, train_loss_results, train_accuracy_results
-        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_acc, train_loss_results, train_accuracy_results, validation_loss_results, validation_accuracy_results
+        return initial_weights_1, initial_weights_2, initial_biases_1, initial_biases_2, test_acc, train_loss_results, train_accuracy_results, validation_loss_results, validation_accuracy_results, ttest_acc_res, test_accuracy, ttest_loss_res
